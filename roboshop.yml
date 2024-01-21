@@ -2,6 +2,6 @@ name: set RoboShop
 hosts: all
 become: yes
 vars:
-  project_name: "roboshop"
+  project_name: roboshop
 roles:
   - "{{role_name}}"

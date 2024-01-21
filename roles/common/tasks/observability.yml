@@ -1,0 +1,13 @@
+- name: Set hostname
+  ansible.builtin.shell: set-hostname {{env}}-{{component}}
+
+- name: Importing elk configuration file
+  ansible.builtin.import_role:  
+   name: elk
+   tasks_from: filebeat
+
+- name: Importing Prometheus node-exporter file
+  ansible.builtin.import_role:
+   name: prometheus
+   tasks_from: node-exporter
+
