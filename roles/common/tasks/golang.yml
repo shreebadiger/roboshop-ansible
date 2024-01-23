@@ -1,0 +1,36 @@
+- name: Check Golang
+  ansible.builtin.shell: type go
+  ignore_errors: yes
+  register: go_stat
+
+- name: Installig Golang
+  ansible.builtin.dnf:
+   name: golang
+   state: present
+  when: go_stat.rc != 0
+
+- name: Importing app pre requisites
+  ansible.builtin.import_role:
+   name: common
+   tasks_from: app-prereq
+
+- name: Importing systemd file
+  ansible.builtin.import_role:
+   name: common
+   tasks_from: systemd
+
+- name: Downloading Golang dependencies
+  ansible.builtin.shell: go mod init dispatch ; go get ; go build
+  args:
+   chdir: "{{app_dir}}"
+
+- name: Importing Schema-load file
+  ansible.builtin.import_role:
+   name: common
+   tasks_from: schema-load
+  when: schema_needed
+
+- name: Importing Observability
+  ansible.builtin.import_role:
+   name: common
+   tasks_from: observability

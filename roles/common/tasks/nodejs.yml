@@ -41,7 +41,7 @@
   ansible.builtin.import_role:
    name: common
    tasks_from: schema-load
-when: schema_needed
+  when: schema_needed
 
 - name: Importing Observability
   ansible.builtin.import_role:

@@ -1,0 +1,33 @@
+- name: Installig Python
+  ansible.builtin.dnf:
+   name: 
+      - python36 
+      - gcc 
+      - python3-devel
+   state: present
+
+- name: Importing app pre requisites
+  ansible.builtin.import_role:
+   name: common
+   tasks_from: app-prereq
+
+- name: Importing systemd file
+  ansible.builtin.import_role:
+   name: common
+   tasks_from: systemd
+
+- name: Downloading Python dependencies
+  ansible.builtin.shell: pip3.6 install -r requirements.txt
+  args:
+   chdir: "{{app_dir}}"
+
+- name: Importing Schema-load file
+  ansible.builtin.import_role:
+   name: common
+   tasks_from: schema-load
+  when: schema_needed
+
+- name: Importing Observability
+  ansible.builtin.import_role:
+   name: common
+   tasks_from: observability

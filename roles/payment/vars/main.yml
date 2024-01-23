@@ -1,9 +1,8 @@
-component: shipping
-log_file: /var/log/shipping.log
+component: payment
+log_file: /var/log/payment.log
 is_rsyslog_needed: yes
 
 app_dir: /app
 app_user: roboshop
-service_name: shipping
-schema_needed: true
-schema_type: mysql
+service_name: payment
+schema_needed: false
