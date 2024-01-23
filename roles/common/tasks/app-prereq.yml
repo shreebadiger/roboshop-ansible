@@ -1,3 +1,8 @@
+   -  name: Add application user
+      ansible.builtin.user:
+       name: "{{app_user}}"
+      when: app_user != "root"
+
    -  name: Deleting old nginx content
       ansible.builtin.file:
        name: "{{ app_dir }}"

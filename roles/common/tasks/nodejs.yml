@@ -1,42 +1,47 @@
+- name: check nodejs
+  ansible.builtin.shell: type node
+  ignore_errors: yes
+  register: node_stat
+
 - name: Disable nodejs default version
   ansible.builtin.shell: dnf module disable nodejs -y
+  when : node_stat.rc != 0
 
 - name: Enable nodejs:18 -y
   ansible.builtin.shell: dnf module enable nodejs:18 -y
+  when : node_stat.rc != 0
 
 - name: Installig nodejs 
   ansible.builtin.dnf:
    name: nodejs
    state: present
+  when : node_stat.rc != 0
+
+- name: Importing app pre requisites
+  ansible.builtin.import_role:
+   name: common
+   tasks_from: app-prereq
 
 - name: Importing systemd file
   ansible.builtin.import_role:
    name: common
    tasks_from: systemd
 
-- name: Importing app pre requisites
-  ansible.builtin.import_role:
-   name: common
-   tasks_from: app-prereq
-  vars:
-   app_dir: "{{app_dir}}"
-   component: "{{component}}"
-   app_user: "{{app_user}}"
-
 - name: Downloading nodejs dependencies
   ansible.builtin.shell: npm install    
   args:
-   chdir: /app
+   chdir: "{{app_dir}}"
 
 - name: Install newrelic nodejs libaray
   ansible.builtin.shell: npm install newrelic --save
   args:
-   chdir: /app
+   chdir: "{{app_dir}}"
 
 - name: Importing Schema-load file
   ansible.builtin.import_role:
    name: common
    tasks_from: schema-load
+when: schema_needed
 
 - name: Importing Observability
   ansible.builtin.import_role:
