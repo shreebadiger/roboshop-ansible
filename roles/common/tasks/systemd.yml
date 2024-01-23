@@ -1,13 +1,9 @@
-- name: Add application user
-  ansible.builtin.user:
-   name: "{{app_user}}"
-
 - name: Copy App service
   ansible.builtin.template:
    src: "{{component}}".service
    dest: /etc/systemd/system/{{component}}.service
 
-- name: Copy App script file
-  ansible.builtin.template:
-   src: nodejs.sh
-   dest: /app/nodejs.sh
+# - name: Copy App script file
+#   ansible.builtin.template:
+#    src: "{{app_type}}".sh
+#    dest: /app/{{app_type}}.sh

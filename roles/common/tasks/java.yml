@@ -1,0 +1,36 @@
+- name: Check Maven
+  ansible.builtin.shell: type mvn
+  ignore_errors: yes
+  register: mvn_stat
+
+- name: Installig Maven 
+  ansible.builtin.dnf:
+   name: maven
+   state: present
+  when : mvn_stat.rc != 0
+
+- name: Importing app pre requisites
+  ansible.builtin.import_role:
+   name: common
+   tasks_from: app-prereq
+
+- name: Importing systemd file
+  ansible.builtin.import_role:
+   name: common
+   tasks_from: systemd
+
+- name: Downloading Maven dependencies
+  ansible.builtin.shell: mvn clean package 
+  args:
+   chdir: "{{app_dir}}"
+
+- name: Importing Schema-load file
+  ansible.builtin.import_role:
+   name: common
+   tasks_from: schema-load
+  when: schema_needed
+
+- name: Importing Observability
+  ansible.builtin.import_role:
+   name: common
+   tasks_from: observability

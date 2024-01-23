@@ -5,5 +5,5 @@ is_rsyslog_needed: yes
 app_dir: /app
 app_user: roboshop
 service_name: catalogue
-
 schema_needed: true
+schema_type: mango
